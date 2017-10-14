@@ -18,7 +18,7 @@ namespace Server
 {
     public partial class Form1 : Form
     {
-        private const int PORT = 9999;
+        private const int PORT = 8888;
         private IPEndPoint IP;
         private Socket server;
         private List<Socket> clientList;
@@ -51,7 +51,7 @@ namespace Server
                         receive.Start(client);
                     }
                 }
-                catch (Exception)
+                catch
                 {
                     IP = new IPEndPoint(IPAddress.Any, PORT);
                     server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.IP);
@@ -66,9 +66,17 @@ namespace Server
         }
         public void Send(Socket client, string data)
         {
-            if (client != null && data != string.Empty)
+            try
             {
-                client.Send(Serialize(data));
+                if (client != null && data != string.Empty)
+                {
+                    client.Send(Serialize(data));
+                }
+
+            }
+            catch
+            {
+                MessageBox.Show("Error");
             }
         }
         public void Receive(object obj)
@@ -82,10 +90,12 @@ namespace Server
                     client.Receive(data);
                     result = Deserialize(data).ToString();
                     View();
+                    result = string.Empty;
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Console.WriteLine(ex.Message);
                 clientList.Remove(client);
                 client.Close();
             }
@@ -93,19 +103,32 @@ namespace Server
         }
         public byte[] Serialize(object obj)
         {
-            MemoryStream stream = new MemoryStream();
-            BinaryFormatter formatter = new BinaryFormatter();
-            formatter.Serialize(stream, obj);
-            return stream.ToArray();
+            using (MemoryStream stream = new MemoryStream())
+            {
+                BinaryFormatter formatter = new BinaryFormatter();
+                formatter.Serialize(stream, obj);
+                byte[] bytes = stream.ToArray();
+                stream.Flush();
+                return bytes;
+            }
+
         }
         object Deserialize(byte[] data)
         {
-            MemoryStream stream = new MemoryStream(data);
-            BinaryFormatter formatter = new BinaryFormatter();
-            return formatter.Deserialize(stream);
+            using (MemoryStream stream = new MemoryStream(data))
+            {
+                //BinaryFormatter formatter = new BinaryFormatter();
+                //return formatter.Deserialize(stream);
+                stream.Position = 0;
+                object desObj = new BinaryFormatter().Deserialize(stream);
+                stream.Flush();
+                return desObj;
+            }
+
         }
         private void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
+            timer1.Stop();
             foreach (var item in clientList)
             {
                 Send(item, "SERVER CLOSE#");
@@ -114,40 +137,54 @@ namespace Server
         }
         public void View()
         {
-            //if (result.Contains("RESET#"))
-            //{
-            //    Reset();
-            //    listObj = new List<Obj>();
-            //    lblModel.Text = "";
-            //}
-            //else 
-
-            if (result.Contains("CLOSE#"))
+            if (result.Contains("RESET#"))
             {
-                ResetClient();
+                Reset();
+                listObj = new List<Obj>();
+                //lblModel.Text = "";
+            }
+            else if (result.Contains("CANCEL"))
+            {
+                string content = getBetween(result, "", "*");
+                Button btn = GetButtonSelected(this, typeof(Button), content);
+                btn.Text = btn.Text.Replace(Environment.NewLine + "calling...", null);
+                btn.BackColor = Color.LightBlue;
+                RemoveItemListView(content);
+
+            }
+            else
+
+            if (result.Contains("FINISH"))
+            {
+                //ResetClient();
+                string content = getBetween(result, "", "*");
+                Button btn = GetButtonSelected(this, typeof(Button), content);
+                btn.Text = btn.Text.Replace(Environment.NewLine + "comming...", null);
+                btn.BackColor = Color.LightBlue;
+                btn.Enabled = true;
             }
             else
             {
                 Obj obj = new Obj();
-                obj.line = getBetween(result, "*", "#");
-                obj.model = getBetween(result, "&", "*");
-                obj.hostName = getBetween(result, "", "&");
+                obj.customer = getBetween(result, "", "@");
+                obj.wo = getBetween(result, "@", "$");
+                obj.model = getBetween(result, "$", "%");
+                obj.type = getBetween(result, "%", "&");
+                obj.status = getBetween(result, "&", "*");
+                obj.timeCall = getBetween(result, "*", "#");
                 listObj.Add(obj);
-                Button button = GetButtonSelected(this, typeof(Button), obj.line);
+                ListViewItem itemContent = new ListViewItem(new[] { obj.customer, obj.wo, obj.model, obj.type, obj.timeCall });
+                lvwView.Items.Add(itemContent);
+                Button button = GetButtonSelected(this, typeof(Button), obj.customer);
+                button.BackColor = Color.Red;
+                button.Text += Environment.NewLine + "calling...";
                 // Send 
-                foreach (var item in clientList)
-                {
-                    Send(item, result);
-                }
-                if (listObj.Count == 1)
-                {
-                    button.BackColor = Color.Red;
-                }
-                else
-                {
-                    button.BackColor = Color.Orange;
-                }
-                lblModel.Text = listObj[0].model;
+                //foreach (var item in clientList)
+                //{
+                //    Send(item, result);
+                //}
+
+                //lblModel.Text = listObj[0].model;
             }
         }
         public string getBetween(string input, string from, string to)
@@ -162,7 +199,7 @@ namespace Server
             return (Button)controls.SelectMany(r => GetAllButtons(r, type))
                 .Concat(controls)
                 .Where(c => c.GetType() == type)
-                .Where(h => h.Text.Equals(content))
+                .Where(h => h.Text.Contains(content))
                 .FirstOrDefault();
         }
         public Button GetButtonSelected(Control control, Type type, Color color)
@@ -180,7 +217,7 @@ namespace Server
             return controls.SelectMany(r => GetAllButtons(r, type))
                 .Concat(controls)
                 .Where(c => c.GetType() == type)
-                .Where(h => h.Text.Contains("LINE"));
+                .Where(h => !h.Text.Contains("Reset"));
         }
 
         public void Reset()
@@ -194,14 +231,14 @@ namespace Server
         }
         public void ResetClient()
         {
-            string host = getBetween(result, "", "*");
-            List<Obj> lst = listObj.FindAll(x => x.hostName == host);
+            string host = getBetween(result, "*", "#");
+            List<Obj> lst = listObj.FindAll(x => x.status == host);
             var buttons = GetAllButtons(this, typeof(Button));
             foreach (var button in buttons)
             {
                 foreach (var item in lst)
                 {
-                    if (item.line == button.Text)
+                    if (item.customer == button.Text)
                     {
                         button.BackColor = Color.LightBlue;
                     }
@@ -216,14 +253,15 @@ namespace Server
                 listObj.RemoveAt(0);
                 Button button = GetButtonSelected(this, typeof(Button), Color.Red);
                 button.BackColor = Color.LightBlue;
-                Button top = GetButtonSelected(this, typeof(Button), listObj[0].line);
+                Button top = GetButtonSelected(this, typeof(Button), listObj[0].customer);
                 top.BackColor = Color.Red;
                 foreach (var item in clientList)
                 {
-                    Send(item, obj.line + "DONE#");
+                    Send(item, obj.customer + "DONE#");
+                    Console.WriteLine("Send ok");
                 }
-                string content = obj.model + ", " + obj.line;
-                lblModel.Text = listObj[0].model;
+                string content = obj.model + ", " + obj.customer;
+                //lblModel.Text = listObj[0].model;
                 Common.WriteLog(path, content);
             }
             else
@@ -234,7 +272,7 @@ namespace Server
                 {
                     Send(item, "FINISH#");
                 }
-                lblModel.Text = "";
+                //lblModel.Text = "";
             }
         }
 
@@ -249,6 +287,197 @@ namespace Server
             if (!Directory.Exists("LogFile"))
             {
                 Directory.CreateDirectory("LogFile");
+            }
+            lvwView.Columns.Add("Khách hàng", 300);
+            lvwView.Columns.Add("Số WO", 200);
+            lvwView.Columns.Add("Model", 300);
+            lvwView.Columns.Add("Kiểu", 200);
+            lvwView.Columns.Add("Thời gian", 200);
+        }
+        private void RemoveItemListView(string input)
+        {
+            for (int i = 0; i < lvwView.Items.Count; i++)
+            {
+                var item = lvwView.Items[i];
+                if (item.Text.Contains(input))
+                {
+                    lvwView.Items.Remove(item);
+                }
+            }
+        }
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if (button2.BackColor == Color.Red)
+            {
+                button2.Text = button2.Text.Replace("calling", "comming");
+                button2.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "TOYODENSO*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("TOYODENSO");
+                button2.Enabled = false;
+            }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (button3.BackColor == Color.Red)
+            {
+                button3.Text = button3.Text.Replace("calling", "comming");
+                button3.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "YOKOWO*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("YOKOWO");
+                button3.Enabled = false;
+            }
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            if (button4.BackColor == Color.Red)
+            {
+                button4.Text = button4.Text.Replace("calling", "comming");
+                button4.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "CANON*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("CANON");
+                button4.Enabled = false;
+            }
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            if (button5.BackColor == Color.Red)
+            {
+                button5.Text = button5.Text.Replace("calling", "comming");
+                button5.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "MURATA*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("MURATA");
+                button5.Enabled = false;
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            if (button6.BackColor == Color.Red)
+            {
+                button6.Text = button6.Text.Replace("calling", "comming");
+                button6.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "FUJI*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("FUJI");
+                button6.Enabled = false;
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            if (button7.BackColor == Color.Red)
+            {
+                button7.Text = button7.Text.Replace("calling", "comming");
+                button7.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "NICHICON*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("NICHICON");
+                button7.Enabled = false;
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (button8.BackColor == Color.Red)
+            {
+                button8.Text = button8.Text.Replace("calling", "comming");
+                button8.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "HONDA*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("HONDA");
+                button8.Enabled = false;
+            }
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (button9.BackColor == Color.Red)
+            {
+                button9.Text = button9.Text.Replace("calling", "comming");
+                button9.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "NIHON*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("NIHON");
+                button9.Enabled = false;
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            if (button10.BackColor == Color.Red)
+            {
+                button10.Text = button10.Text.Replace("calling", "comming");
+                button10.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "BROTHER*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("BROTHER");
+                button10.Enabled = false;
+            }
+        }
+
+        private void button11_Click(object sender, EventArgs e)
+        {
+            if (button11.BackColor == Color.Red)
+            {
+                button11.Text = button11.Text.Replace("calling", "comming");
+                button11.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "SCHNEIDER*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("SCHNEIDER");
+                button11.Enabled = false;
+            }
+        }
+
+        private void button12_Click(object sender, EventArgs e)
+        {
+            if (button12.BackColor == Color.Red)
+            {
+                button12.Text = button12.Text.Replace("calling", "comming");
+                button12.BackColor = Color.Yellow;
+                string sTime = DateTime.Now.ToString("HH:mm:ss");
+                foreach (var item in clientList)
+                {
+                    Send(item, "KYOCERA*" + sTime + "$" + "COMMING#");
+                }
+                RemoveItemListView("KYOCERA");
+                button12.Enabled = false;
             }
         }
     }

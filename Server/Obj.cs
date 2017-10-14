@@ -6,10 +6,15 @@ using System.Threading.Tasks;
 
 namespace Server
 {
-    class Obj
+    public class Obj
     {
-        public string line { get; set; }
+        public string customer { get; set; }
+        public string wo { get; set; }
         public string model { get; set; }
-        public string hostName { get; set; }
+        public string type { get; set; }
+        //public string hostName { get; set; }
+        public string status { get; set; }
+        public string timeCall { get; set; }
+        public string timeResponse { get; set; }
     }
 }
