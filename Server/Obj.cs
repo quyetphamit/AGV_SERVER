@@ -17,4 +17,14 @@ namespace Server
         public string timeCall { get; set; }
         public string timeResponse { get; set; }
     }
+    public class Comport
+    {
+        public string id { get; set; }
+        public string Ghi_Chu { get; set; }
+        public string Cong_com { get; set; }
+        public int BaudRate { get; set; }
+        public int So_bit { get; set; }
+        public string Parity { get; set; }
+        public int StopBits { get; set; }
+    }
 }

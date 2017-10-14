@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.IO;
+using System.IO.Ports;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
@@ -137,13 +138,14 @@ namespace Server
         }
         public void View()
         {
-            if (result.Contains("RESET#"))
-            {
-                Reset();
-                listObj = new List<Obj>();
-                //lblModel.Text = "";
-            }
-            else if (result.Contains("CANCEL"))
+            //if (result.Contains("RESET#"))
+            //{
+            //    Reset();
+            //    listObj = new List<Obj>();
+            //    //lblModel.Text = "";
+            //}
+            //else 
+            if (result.Contains("CANCEL"))
             {
                 string content = getBetween(result, "", "*");
                 Button btn = GetButtonSelected(this, typeof(Button), content);
@@ -152,11 +154,8 @@ namespace Server
                 RemoveItemListView(content);
 
             }
-            else
-
-            if (result.Contains("FINISH"))
+            else if (result.Contains("FINISH"))
             {
-                //ResetClient();
                 string content = getBetween(result, "", "*");
                 Button btn = GetButtonSelected(this, typeof(Button), content);
                 btn.Text = btn.Text.Replace(Environment.NewLine + "comming...", null);
@@ -179,6 +178,7 @@ namespace Server
                 button.BackColor = Color.Red;
                 button.Text += Environment.NewLine + "calling...";
                 // Send 
+                // Trường hợp nhiều client
                 //foreach (var item in clientList)
                 //{
                 //    Send(item, result);
@@ -272,7 +272,6 @@ namespace Server
                 {
                     Send(item, "FINISH#");
                 }
-                //lblModel.Text = "";
             }
         }
 
@@ -289,10 +288,10 @@ namespace Server
                 Directory.CreateDirectory("LogFile");
             }
             lvwView.Columns.Add("Khách hàng", 300);
-            lvwView.Columns.Add("Số WO", 200);
+            lvwView.Columns.Add("Số WO", 250);
             lvwView.Columns.Add("Model", 300);
             lvwView.Columns.Add("Kiểu", 200);
-            lvwView.Columns.Add("Thời gian", 200);
+            lvwView.Columns.Add("Thời gian gọi AGV", 350);
         }
         private void RemoveItemListView(string input)
         {
@@ -479,6 +478,46 @@ namespace Server
                 RemoveItemListView("KYOCERA");
                 button12.Enabled = false;
             }
+        }
+
+        private void exitToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            CloseConnect();
+            this.Close();
+        }
+        public SerialPort getPort(string comId)
+        {
+            var portSetting = Common.Comport().FirstOrDefault(r => r.id == comId);
+            if (portSetting != null)
+            {
+                SerialPort comPort = new SerialPort()
+                {
+                    PortName = portSetting.Cong_com,
+                    BaudRate = portSetting.BaudRate,
+                    DataBits = portSetting.So_bit,
+                    Parity = portSetting.Parity == "None" ? Parity.None :
+                             portSetting.Parity == "Even" ? Parity.Even :
+                             portSetting.Parity == "Odd" ? Parity.Odd :
+                             portSetting.Parity == "Mark" ? Parity.Mark : Parity.Space,
+                    StopBits = portSetting.StopBits == 0 ? StopBits.None :
+                               portSetting.StopBits == 1 ? StopBits.One : StopBits.Two
+
+                };
+                try
+                {
+                    comPort.Open();
+                }
+                catch (Exception e)
+                {
+                    if (MessageBox.Show(e.Message, "Information",MessageBoxButtons.OK,MessageBoxIcon.Error) == DialogResult.OK)
+                    {
+                        // quyetpham
+                        Application.Exit();
+                    }
+                }
+                return comPort;
+            }
+            else return null;
         }
     }
 }
