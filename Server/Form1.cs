@@ -25,7 +25,7 @@ namespace Server
         private List<Socket> clientList;
         private List<Obj> listObj = new List<Obj>();
         private string result;
-        private string path = "LogFile\\Log.txt";
+        private string pathLog = Application.StartupPath + "\\logfile";
         public Form1()
         {
             InitializeComponent();
@@ -94,9 +94,9 @@ namespace Server
                     result = string.Empty;
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                Console.WriteLine(ex.Message);
+                //Console.WriteLine(ex.Message);
                 clientList.Remove(client);
                 client.Close();
             }
@@ -134,23 +134,26 @@ namespace Server
             {
                 Send(item, "SERVER CLOSE#");
             }
-            CloseConnect();
+            if (comControl.IsOpen)
+            {
+                comControl.Write("X");
+                comControl.Close();
+            }
+            //CloseConnect();
         }
         public void View()
         {
-            //if (result.Contains("RESET#"))
-            //{
-            //    Reset();
-            //    listObj = new List<Obj>();
-            //    //lblModel.Text = "";
-            //}
-            //else 
             if (result.Contains("CANCEL"))
             {
+                string nameFile = pathLog + "\\" + DateTime.Now.ToString("ddMMyy") + ".txt";
                 string content = getBetween(result, "", "*");
                 Button btn = GetButtonSelected(this, typeof(Button), content);
-                btn.Text = btn.Text.Replace(Environment.NewLine + "calling...", null);
+                btn.Text = btn.Text.Replace(Environment.NewLine + "Calling...", null);
                 btn.BackColor = Color.LightBlue;
+                ReplaceSubItemListView(content, 5, "#NA");
+                ReplaceSubItemListView(content, 6, DateTime.Now.ToString("HH:mm:ss"));
+                ReplaceSubItemListView(content, 7, "Cancel");
+                SaveLog(nameFile, btn.Text);
                 RemoveItemListView(content);
 
             }
@@ -158,7 +161,12 @@ namespace Server
             {
                 string content = getBetween(result, "", "*");
                 Button btn = GetButtonSelected(this, typeof(Button), content);
-                btn.Text = btn.Text.Replace(Environment.NewLine + "comming...", null);
+                btn.Text = btn.Text.Replace(Environment.NewLine + "Comming...", null);
+                ReplaceSubItemListView(content, 6, DateTime.Now.ToString("HH:mm:ss"));
+                ReplaceSubItemListView(content, 7, "Finish");
+                string nameFile = pathLog + "\\" + DateTime.Now.ToString("ddMMyy") + ".txt";
+                SaveLog(nameFile, btn.Text);
+                RemoveItemListView(content);
                 btn.BackColor = Color.LightBlue;
                 btn.Enabled = true;
             }
@@ -172,11 +180,12 @@ namespace Server
                 obj.status = getBetween(result, "&", "*");
                 obj.timeCall = getBetween(result, "*", "#");
                 listObj.Add(obj);
-                ListViewItem itemContent = new ListViewItem(new[] { obj.customer, obj.wo, obj.model, obj.type, obj.timeCall });
+                ListViewItem itemContent = new ListViewItem(new[] { obj.customer, obj.wo, obj.model, obj.type, obj.timeCall, obj.timeReponseStart, obj.timeResponseEnd, obj.status });
                 lvwView.Items.Add(itemContent);
                 Button button = GetButtonSelected(this, typeof(Button), obj.customer);
                 button.BackColor = Color.Red;
-                button.Text += Environment.NewLine + "calling...";
+                button.Text += Environment.NewLine + "Calling...";
+                ReplaceSubItemListView(obj.customer, 7, "Calling");
                 // Send 
                 // Trường hợp nhiều client
                 //foreach (var item in clientList)
@@ -245,36 +254,6 @@ namespace Server
                 }
             }
         }
-        private void btnReset_Click(object sender, EventArgs e)
-        {
-            if (listObj.Count > 1)
-            {
-                Obj obj = listObj[0];
-                listObj.RemoveAt(0);
-                Button button = GetButtonSelected(this, typeof(Button), Color.Red);
-                button.BackColor = Color.LightBlue;
-                Button top = GetButtonSelected(this, typeof(Button), listObj[0].customer);
-                top.BackColor = Color.Red;
-                foreach (var item in clientList)
-                {
-                    Send(item, obj.customer + "DONE#");
-                    Console.WriteLine("Send ok");
-                }
-                string content = obj.model + ", " + obj.customer;
-                //lblModel.Text = listObj[0].model;
-                Common.WriteLog(path, content);
-            }
-            else
-            {
-                Reset();
-                listObj = new List<Obj>();
-                foreach (var item in clientList)
-                {
-                    Send(item, "FINISH#");
-                }
-            }
-        }
-
         private void timer1_Tick(object sender, EventArgs e)
         {
             lblDatetime.Text = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
@@ -283,15 +262,27 @@ namespace Server
         private void Form1_Load(object sender, EventArgs e)
         {
             timer1.Start();
+            comControl = SetupComport("com01");
+            LoadSetting();
+        }
+        public void LoadSetting()
+        {
             if (!Directory.Exists("LogFile"))
             {
                 Directory.CreateDirectory("LogFile");
             }
-            lvwView.Columns.Add("Khách hàng", 300);
-            lvwView.Columns.Add("Số WO", 250);
-            lvwView.Columns.Add("Model", 300);
+            lvwView.Columns.Add("Khách hàng", 200);
+            lvwView.Columns.Add("Số WO", 200);
+            lvwView.Columns.Add("Model", 200);
             lvwView.Columns.Add("Kiểu", 200);
-            lvwView.Columns.Add("Thời gian gọi AGV", 350);
+            lvwView.Columns.Add("Thời gian gọi", 200);
+            lvwView.Columns.Add("Thời gian trả", 200);
+            lvwView.Columns.Add("Thời gian kết thúc", 250);
+            lvwView.Columns.Add("Trạng thái", 200);
+            if (!Directory.Exists(Application.StartupPath + "\\logfile"))
+            {
+                Directory.CreateDirectory(Application.StartupPath + "\\logfile");
+            }
         }
         private void RemoveItemListView(string input)
         {
@@ -308,15 +299,18 @@ namespace Server
         {
             if (button2.BackColor == Color.Red)
             {
-                button2.Text = button2.Text.Replace("calling", "comming");
+                string nameFile = pathLog + "\\" + DateTime.Now.ToString("ddMMyy") + ".txt";
+                button2.Text = button2.Text.Replace("Calling", "Comming");
                 button2.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "TOYODENSO*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("TOYODENSO");
-                button2.Enabled = false;
+                ReplaceSubItemListView("TOYODENSO", 5, sTime);
+                ReplaceSubItemListView("TOYODENSO", 7, "Comming");
+                //SaveLog(nameFile, button2.Text);
+                button2.Enabled = false; ;
             }
         }
 
@@ -324,14 +318,17 @@ namespace Server
         {
             if (button3.BackColor == Color.Red)
             {
-                button3.Text = button3.Text.Replace("calling", "comming");
+                string nameFile = pathLog + "\\" + DateTime.Now.ToString("ddMMyy") + ".txt";
+                button3.Text = button3.Text.Replace("Calling", "Comming");
                 button3.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "YOKOWO*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("YOKOWO");
+                ReplaceSubItemListView("YOKOWO", 5, sTime);
+                ReplaceSubItemListView("YOKOWO", 7, "Comming");
+                //SaveLog(nameFile, button3.Text);
                 button3.Enabled = false;
             }
         }
@@ -340,14 +337,15 @@ namespace Server
         {
             if (button4.BackColor == Color.Red)
             {
-                button4.Text = button4.Text.Replace("calling", "comming");
+                button4.Text = button4.Text.Replace("Calling", "Comming");
                 button4.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "CANON*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("CANON");
+                ReplaceSubItemListView("CANON", 5, sTime);
+                ReplaceSubItemListView("CANON", 7, "Comming");
                 button4.Enabled = false;
             }
         }
@@ -356,14 +354,15 @@ namespace Server
         {
             if (button5.BackColor == Color.Red)
             {
-                button5.Text = button5.Text.Replace("calling", "comming");
+                button5.Text = button5.Text.Replace("Calling", "Comming");
                 button5.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "MURATA*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("MURATA");
+                ReplaceSubItemListView("MURATA", 5, sTime);
+                ReplaceSubItemListView("MURATA", 7, "Comming");
                 button5.Enabled = false;
             }
         }
@@ -372,14 +371,15 @@ namespace Server
         {
             if (button6.BackColor == Color.Red)
             {
-                button6.Text = button6.Text.Replace("calling", "comming");
+                button6.Text = button6.Text.Replace("Calling", "Comming");
                 button6.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "FUJI*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("FUJI");
+                ReplaceSubItemListView("FUJI", 5, sTime);
+                ReplaceSubItemListView("FUJI", 7, "Comming");
                 button6.Enabled = false;
             }
         }
@@ -388,14 +388,15 @@ namespace Server
         {
             if (button7.BackColor == Color.Red)
             {
-                button7.Text = button7.Text.Replace("calling", "comming");
+                button7.Text = button7.Text.Replace("Calling", "Comming");
                 button7.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "NICHICON*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("NICHICON");
+                ReplaceSubItemListView("NICHICON", 5, sTime);
+                ReplaceSubItemListView("NICHICON", 7, "Comming");
                 button7.Enabled = false;
             }
         }
@@ -404,14 +405,15 @@ namespace Server
         {
             if (button8.BackColor == Color.Red)
             {
-                button8.Text = button8.Text.Replace("calling", "comming");
+                button8.Text = button8.Text.Replace("Calling", "Comming");
                 button8.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "HONDA*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("HONDA");
+                ReplaceSubItemListView("HONDA", 5, sTime);
+                ReplaceSubItemListView("HONDA", 7, "Comming");
                 button8.Enabled = false;
             }
         }
@@ -420,14 +422,15 @@ namespace Server
         {
             if (button9.BackColor == Color.Red)
             {
-                button9.Text = button9.Text.Replace("calling", "comming");
+                button9.Text = button9.Text.Replace("Calling", "Comming");
                 button9.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "NIHON*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("NIHON");
+                ReplaceSubItemListView("NIHON", 5, sTime);
+                ReplaceSubItemListView("NIHON", 7, "Comming");
                 button9.Enabled = false;
             }
         }
@@ -436,14 +439,15 @@ namespace Server
         {
             if (button10.BackColor == Color.Red)
             {
-                button10.Text = button10.Text.Replace("calling", "comming");
+                button10.Text = button10.Text.Replace("Calling", "Comming");
                 button10.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "BROTHER*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("BROTHER");
+                ReplaceSubItemListView("BROTHER", 5, sTime);
+                ReplaceSubItemListView("BROTHER", 7, "Comming");
                 button10.Enabled = false;
             }
         }
@@ -452,14 +456,15 @@ namespace Server
         {
             if (button11.BackColor == Color.Red)
             {
-                button11.Text = button11.Text.Replace("calling", "comming");
+                button11.Text = button11.Text.Replace("Calling", "Comming");
                 button11.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "SCHNEIDER*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("SCHNEIDER");
+                ReplaceSubItemListView("SCHNEIDER", 5, sTime);
+                ReplaceSubItemListView("SCHNEIDER", 7, "Comming");
                 button11.Enabled = false;
             }
         }
@@ -468,14 +473,15 @@ namespace Server
         {
             if (button12.BackColor == Color.Red)
             {
-                button12.Text = button12.Text.Replace("calling", "comming");
+                button12.Text = button12.Text.Replace("Calling", "Comming");
                 button12.BackColor = Color.Yellow;
                 string sTime = DateTime.Now.ToString("HH:mm:ss");
                 foreach (var item in clientList)
                 {
                     Send(item, "KYOCERA*" + sTime + "$" + "COMMING#");
                 }
-                RemoveItemListView("KYOCERA");
+                ReplaceSubItemListView("KYOCERA", 5, sTime);
+                ReplaceSubItemListView("KYOCERA", 7, "Comming");
                 button12.Enabled = false;
             }
         }
@@ -485,9 +491,9 @@ namespace Server
             CloseConnect();
             this.Close();
         }
-        public SerialPort getPort(string comId)
+        public SerialPort SetupComport(string comId)
         {
-            var portSetting = Common.Comport().FirstOrDefault(r => r.id == comId);
+            var portSetting = Common.ReadComport().FirstOrDefault(r => r.id == comId);
             if (portSetting != null)
             {
                 SerialPort comPort = new SerialPort()
@@ -509,7 +515,7 @@ namespace Server
                 }
                 catch (Exception e)
                 {
-                    if (MessageBox.Show(e.Message, "Information",MessageBoxButtons.OK,MessageBoxIcon.Error) == DialogResult.OK)
+                    if (MessageBox.Show(e.Message, "Information", MessageBoxButtons.OK, MessageBoxIcon.Error) == DialogResult.OK)
                     {
                         // quyetpham
                         Application.Exit();
@@ -518,6 +524,48 @@ namespace Server
                 return comPort;
             }
             else return null;
+        }
+        public void ReplaceSubItemListView(string customer, int index, string content)
+        {
+            for (int i = 0; i < lvwView.Items.Count; i++)
+            {
+                var item = lvwView.Items[i];
+                if (item.Text.Contains(customer))
+                {
+                    item.SubItems[index].Text = content;
+                }
+            }
+        }
+
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmAbout frmAbout = new frmAbout();
+            frmAbout.ShowDialog();
+        }
+        public void SaveLog(string pathLog, string customer)
+        {
+            string content = string.Empty;
+            using (StreamWriter writer = new StreamWriter(pathLog, true, Encoding.Unicode))
+            {
+                for (int i = 0; i < lvwView.Items.Count; i++)
+                {
+                    var item = lvwView.Items[i];
+                    if (item.Text.Contains(customer))
+                    {
+                        content = item.SubItems[0].Text + "," + item.SubItems[1].Text + ","
+                            + item.SubItems[2].Text + "," + item.SubItems[3].Text + ","
+                            + item.SubItems[4].Text + "," + item.SubItems[5].Text + ","
+                            + item.SubItems[6].Text + "," + item.SubItems[7].Text;
+                    }
+                }
+                writer.WriteLine(content);
+            }
+        }
+
+        private void reportToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            frmReport frmReport = new frmReport();
+            frmReport.ShowDialog();
         }
     }
 }

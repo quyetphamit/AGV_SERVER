@@ -15,7 +15,8 @@ namespace Server
         //public string hostName { get; set; }
         public string status { get; set; }
         public string timeCall { get; set; }
-        public string timeResponse { get; set; }
+        public string timeReponseStart { get; set; }
+        public string timeResponseEnd { get; set; }
     }
     public class Comport
     {

@@ -6,3 +6,18 @@ D:\VOC\Server\Server\obj\Debug\Server.Properties.Resources.resources
 D:\VOC\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
 D:\VOC\Server\Server\obj\Debug\Server.exe
 D:\VOC\Server\Server\obj\Debug\Server.pdb
+D:\VOC\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+D:\backup\call AGV\ver 1002\Server\Server\bin\Debug\Server.exe.config
+D:\backup\call AGV\ver 1002\Server\Server\obj\Debug\Server.exe
+D:\backup\call AGV\ver 1002\Server\Server\obj\Debug\Server.pdb
+D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\Server.exe.config
+D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\Server.exe
+D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\Server.pdb
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.Form1.resources
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.Properties.Resources.resources
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.exe
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.pdb
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.frmAbout.resources
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.frmReport.resources
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache

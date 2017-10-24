@@ -23,7 +23,7 @@ namespace Server
                 }
             }
         }
-        public static List<Comport> Comport()
+        public static List<Comport> ReadComport()
         {
             List<Comport> comport = new List<Server.Comport>();
             File.ReadAllLines("Setup\\Comport.txt").ToList().ForEach(r =>
@@ -42,5 +42,6 @@ namespace Server
             });
             return comport;
         }
+
     }
 }
