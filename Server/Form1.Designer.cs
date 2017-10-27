@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.button2 = new System.Windows.Forms.Button();
             this.button3 = new System.Windows.Forms.Button();
@@ -44,7 +45,6 @@
             this.button13 = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.lblDatetime = new System.Windows.Forms.Label();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.lvwView = new System.Windows.Forms.ListView();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -57,9 +57,11 @@
             this.reportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.comControl = new System.IO.Ports.SerialPort(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.axWindowsMediaPlayer1 = new AxWMPLib.AxWindowsMediaPlayer();
             this.tableLayoutPanel1.SuspendLayout();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -88,13 +90,13 @@
             this.tableLayoutPanel1.Controls.Add(this.button11, 6, 2);
             this.tableLayoutPanel1.Controls.Add(this.button12, 8, 2);
             this.tableLayoutPanel1.Controls.Add(this.button13, 10, 2);
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(12, 126);
+            this.tableLayoutPanel1.Location = new System.Drawing.Point(3, 126);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(1625, 362);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(1345, 281);
             this.tableLayoutPanel1.TabIndex = 12;
             // 
             // button2
@@ -104,7 +106,7 @@
             this.button2.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.button2.Location = new System.Drawing.Point(3, 3);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(248, 165);
+            this.button2.Size = new System.Drawing.Size(201, 124);
             this.button2.TabIndex = 0;
             this.button2.Text = "TOYODENSO";
             this.button2.UseVisualStyleBackColor = false;
@@ -115,9 +117,9 @@
             this.button3.BackColor = System.Drawing.Color.LightBlue;
             this.button3.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button3.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button3.Location = new System.Drawing.Point(277, 3);
+            this.button3.Location = new System.Drawing.Point(230, 3);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(248, 165);
+            this.button3.Size = new System.Drawing.Size(201, 124);
             this.button3.TabIndex = 1;
             this.button3.Text = "YOKOWO";
             this.button3.UseVisualStyleBackColor = false;
@@ -128,9 +130,9 @@
             this.button4.BackColor = System.Drawing.Color.LightBlue;
             this.button4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button4.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button4.Location = new System.Drawing.Point(551, 3);
+            this.button4.Location = new System.Drawing.Point(457, 3);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(248, 165);
+            this.button4.Size = new System.Drawing.Size(201, 124);
             this.button4.TabIndex = 2;
             this.button4.Text = "CANON";
             this.button4.UseVisualStyleBackColor = false;
@@ -141,9 +143,9 @@
             this.button5.BackColor = System.Drawing.Color.LightBlue;
             this.button5.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button5.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button5.Location = new System.Drawing.Point(825, 3);
+            this.button5.Location = new System.Drawing.Point(684, 3);
             this.button5.Name = "button5";
-            this.button5.Size = new System.Drawing.Size(248, 165);
+            this.button5.Size = new System.Drawing.Size(201, 124);
             this.button5.TabIndex = 3;
             this.button5.Text = "MURATA";
             this.button5.UseVisualStyleBackColor = false;
@@ -154,9 +156,9 @@
             this.button6.BackColor = System.Drawing.Color.LightBlue;
             this.button6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button6.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button6.Location = new System.Drawing.Point(1099, 3);
+            this.button6.Location = new System.Drawing.Point(911, 3);
             this.button6.Name = "button6";
-            this.button6.Size = new System.Drawing.Size(248, 165);
+            this.button6.Size = new System.Drawing.Size(201, 124);
             this.button6.TabIndex = 4;
             this.button6.Text = "FUJI";
             this.button6.UseVisualStyleBackColor = false;
@@ -167,9 +169,9 @@
             this.button7.BackColor = System.Drawing.Color.LightBlue;
             this.button7.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button7.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button7.Location = new System.Drawing.Point(1373, 3);
+            this.button7.Location = new System.Drawing.Point(1138, 3);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(249, 165);
+            this.button7.Size = new System.Drawing.Size(204, 124);
             this.button7.TabIndex = 5;
             this.button7.Text = "NICHICON";
             this.button7.UseVisualStyleBackColor = false;
@@ -180,9 +182,9 @@
             this.button8.BackColor = System.Drawing.Color.LightBlue;
             this.button8.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button8.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button8.Location = new System.Drawing.Point(3, 194);
+            this.button8.Location = new System.Drawing.Point(3, 153);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(248, 165);
+            this.button8.Size = new System.Drawing.Size(201, 125);
             this.button8.TabIndex = 6;
             this.button8.Text = "HONDA";
             this.button8.UseVisualStyleBackColor = false;
@@ -193,9 +195,9 @@
             this.button9.BackColor = System.Drawing.Color.LightBlue;
             this.button9.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button9.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button9.Location = new System.Drawing.Point(277, 194);
+            this.button9.Location = new System.Drawing.Point(230, 153);
             this.button9.Name = "button9";
-            this.button9.Size = new System.Drawing.Size(248, 165);
+            this.button9.Size = new System.Drawing.Size(201, 125);
             this.button9.TabIndex = 7;
             this.button9.Text = "NIHON";
             this.button9.UseVisualStyleBackColor = false;
@@ -206,9 +208,9 @@
             this.button10.BackColor = System.Drawing.Color.LightBlue;
             this.button10.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button10.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button10.Location = new System.Drawing.Point(551, 194);
+            this.button10.Location = new System.Drawing.Point(457, 153);
             this.button10.Name = "button10";
-            this.button10.Size = new System.Drawing.Size(248, 165);
+            this.button10.Size = new System.Drawing.Size(201, 125);
             this.button10.TabIndex = 8;
             this.button10.Text = "BROTHER";
             this.button10.UseVisualStyleBackColor = false;
@@ -219,9 +221,9 @@
             this.button11.BackColor = System.Drawing.Color.LightBlue;
             this.button11.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button11.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button11.Location = new System.Drawing.Point(825, 194);
+            this.button11.Location = new System.Drawing.Point(684, 153);
             this.button11.Name = "button11";
-            this.button11.Size = new System.Drawing.Size(248, 165);
+            this.button11.Size = new System.Drawing.Size(201, 125);
             this.button11.TabIndex = 9;
             this.button11.Text = "SCHNEIDER";
             this.button11.UseVisualStyleBackColor = false;
@@ -232,9 +234,9 @@
             this.button12.BackColor = System.Drawing.Color.LightBlue;
             this.button12.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button12.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button12.Location = new System.Drawing.Point(1099, 194);
+            this.button12.Location = new System.Drawing.Point(911, 153);
             this.button12.Name = "button12";
-            this.button12.Size = new System.Drawing.Size(248, 165);
+            this.button12.Size = new System.Drawing.Size(201, 125);
             this.button12.TabIndex = 10;
             this.button12.Text = "KYOCERA";
             this.button12.UseVisualStyleBackColor = false;
@@ -245,11 +247,10 @@
             this.button13.BackColor = System.Drawing.Color.LightBlue;
             this.button13.Dock = System.Windows.Forms.DockStyle.Fill;
             this.button13.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button13.Location = new System.Drawing.Point(1373, 194);
+            this.button13.Location = new System.Drawing.Point(1138, 153);
             this.button13.Name = "button13";
-            this.button13.Size = new System.Drawing.Size(249, 165);
+            this.button13.Size = new System.Drawing.Size(204, 125);
             this.button13.TabIndex = 11;
-            this.button13.Text = "LINE 12";
             this.button13.UseVisualStyleBackColor = false;
             // 
             // label1
@@ -276,29 +277,16 @@
             this.label3.TabIndex = 17;
             this.label3.Text = "AGV CONTROL SYSTEM";
             // 
-            // lblDatetime
-            // 
-            this.lblDatetime.AutoSize = true;
-            this.lblDatetime.BackColor = System.Drawing.SystemColors.ActiveCaptionText;
-            this.lblDatetime.Font = new System.Drawing.Font("Microsoft Sans Serif", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDatetime.ForeColor = System.Drawing.Color.Lime;
-            this.lblDatetime.Location = new System.Drawing.Point(814, 23);
-            this.lblDatetime.Name = "lblDatetime";
-            this.lblDatetime.Size = new System.Drawing.Size(160, 42);
-            this.lblDatetime.TabIndex = 18;
-            this.lblDatetime.Text = "datetime";
-            this.lblDatetime.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // timer1
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // lvwView
             // 
-            this.lvwView.Font = new System.Drawing.Font("Microsoft Sans Serif", 18F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lvwView.Location = new System.Drawing.Point(17, 515);
+            this.lvwView.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lvwView.Location = new System.Drawing.Point(3, 413);
             this.lvwView.Name = "lvwView";
-            this.lvwView.Size = new System.Drawing.Size(1620, 341);
+            this.lvwView.Size = new System.Drawing.Size(1350, 280);
             this.lvwView.TabIndex = 19;
             this.lvwView.UseCompatibleStateImageBehavior = false;
             this.lvwView.View = System.Windows.Forms.View.Details;
@@ -310,7 +298,7 @@
             this.helpToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1649, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1356, 24);
             this.menuStrip1.TabIndex = 20;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -372,19 +360,28 @@
             this.pictureBox1.Image = global::Server.Properties.Resources.Capture;
             this.pictureBox1.Location = new System.Drawing.Point(0, 24);
             this.pictureBox1.Name = "pictureBox1";
-            this.pictureBox1.Size = new System.Drawing.Size(1649, 92);
+            this.pictureBox1.Size = new System.Drawing.Size(1356, 92);
             this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox1.TabIndex = 10;
             this.pictureBox1.TabStop = false;
+            // 
+            // axWindowsMediaPlayer1
+            // 
+            this.axWindowsMediaPlayer1.Enabled = true;
+            this.axWindowsMediaPlayer1.Location = new System.Drawing.Point(3, 695);
+            this.axWindowsMediaPlayer1.Name = "axWindowsMediaPlayer1";
+            this.axWindowsMediaPlayer1.OcxState = ((System.Windows.Forms.AxHost.State)(resources.GetObject("axWindowsMediaPlayer1.OcxState")));
+            this.axWindowsMediaPlayer1.Size = new System.Drawing.Size(240, 45);
+            this.axWindowsMediaPlayer1.TabIndex = 21;
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1649, 868);
+            this.ClientSize = new System.Drawing.Size(1356, 742);
+            this.Controls.Add(this.axWindowsMediaPlayer1);
             this.Controls.Add(this.lvwView);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.lblDatetime);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.pictureBox1);
@@ -392,13 +389,13 @@
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "Form1";
             this.Text = "Server";
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.axWindowsMediaPlayer1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -420,7 +417,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.Label lblDatetime;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.ListView lvwView;
         private System.Windows.Forms.MenuStrip menuStrip1;
@@ -432,6 +428,7 @@
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem1;
         private System.IO.Ports.SerialPort comControl;
         private System.Windows.Forms.ToolStripMenuItem reportToolStripMenuItem;
+        private AxWMPLib.AxWindowsMediaPlayer axWindowsMediaPlayer1;
     }
 }
 

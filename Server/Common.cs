@@ -42,6 +42,21 @@ namespace Server
             });
             return comport;
         }
+        public static string ReadMusic()
+        {
+            string result = string.Empty;
+            try
+            {
 
+                result = File.ReadLines("Setup\\Setting.txt").Skip(1).Take(1).FirstOrDefault();
+            }
+            catch (Exception)
+            {
+
+                System.Windows.Forms.MessageBox.Show("Music notfound");
+            }
+            return result;
+
+        }
     }
 }

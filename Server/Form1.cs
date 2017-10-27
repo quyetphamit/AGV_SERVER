@@ -256,33 +256,45 @@ namespace Server
         }
         private void timer1_Tick(object sender, EventArgs e)
         {
-            lblDatetime.Text = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
+            var button = GetButtonSelected(this, typeof(Button), Color.Red);
+            if (button != null)
+            {
+                axWindowsMediaPlayer1.Ctlcontrols.play();
+            }
+            else
+            {
+                axWindowsMediaPlayer1.Ctlcontrols.stop();
+            }
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
             timer1.Start();
-            comControl = SetupComport("com01");
             LoadSetting();
         }
         public void LoadSetting()
         {
+            comControl = SetupComport("com01");
             if (!Directory.Exists("LogFile"))
             {
                 Directory.CreateDirectory("LogFile");
             }
-            lvwView.Columns.Add("Khách hàng", 200);
-            lvwView.Columns.Add("Số WO", 200);
-            lvwView.Columns.Add("Model", 200);
-            lvwView.Columns.Add("Kiểu", 200);
-            lvwView.Columns.Add("Thời gian gọi", 200);
-            lvwView.Columns.Add("Thời gian trả", 200);
+            lvwView.Columns.Add("Khách hàng", 180);
+            lvwView.Columns.Add("Số WO", 150);
+            lvwView.Columns.Add("Model", 150);
+            lvwView.Columns.Add("Kiểu", 150);
+            lvwView.Columns.Add("Thời gian gọi", 160);
+            lvwView.Columns.Add("Thời gian trả", 160);
             lvwView.Columns.Add("Thời gian kết thúc", 250);
-            lvwView.Columns.Add("Trạng thái", 200);
+            lvwView.Columns.Add("Trạng thái", 150);
             if (!Directory.Exists(Application.StartupPath + "\\logfile"))
             {
                 Directory.CreateDirectory(Application.StartupPath + "\\logfile");
             }
+            string mp3 = Common.ReadMusic();
+            axWindowsMediaPlayer1.URL = Application.StartupPath + "\\" + mp3;
+            axWindowsMediaPlayer1.Ctlcontrols.stop();
+            axWindowsMediaPlayer1.settings.volume = 100;
         }
         private void RemoveItemListView(string input)
         {

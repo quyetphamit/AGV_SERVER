@@ -76,10 +76,10 @@ namespace Server
                         lst.Add(obj);
                     });
             }
-            else
-            {
-                Console.WriteLine("Hehe");
-            }
+            //else
+            //{
+            //    Console.WriteLine("Hehe");
+            //}
 
             dvSearch.DataSource = lst;
         }

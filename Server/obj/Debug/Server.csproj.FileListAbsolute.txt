@@ -13,11 +13,32 @@ D:\backup\call AGV\ver 1002\Server\Server\obj\Debug\Server.pdb
 D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\Server.exe.config
 D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\Server.exe
 D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\Server.pdb
+D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\Interop.WMPLib.dll
+D:\Quyet\AGV\ver 1002\Server\Server\bin\Debug\AxInterop.WMPLib.dll
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Interop.WMPLib.dll
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\AxInterop.WMPLib.dll
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.csproj.ResolveComReference.cache
 D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.Form1.resources
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.frmAbout.resources
 D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.Properties.Resources.resources
+D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.frmReport.resources
 D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
 D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.exe
 D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.pdb
-D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.frmAbout.resources
-D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.frmReport.resources
-D:\Quyet\AGV\ver 1002\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+F:\Server\Server\bin\Debug\Server.exe.config
+F:\Server\Server\obj\Debug\Interop.WMPLib.dll
+F:\Server\Server\obj\Debug\AxInterop.WMPLib.dll
+F:\Server\Server\obj\Debug\Server.csproj.ResolveComReference.cache
+F:\Server\Server\obj\Debug\Server.exe
+F:\Server\Server\obj\Debug\Server.pdb
+F:\Server\Server\bin\Debug\Server.exe
+F:\Server\Server\bin\Debug\Server.pdb
+F:\Server\Server\bin\Debug\Interop.WMPLib.dll
+F:\Server\Server\bin\Debug\AxInterop.WMPLib.dll
+F:\Server\Server\obj\Debug\Server.csprojResolveAssemblyReference.cache
+F:\Server\Server\obj\Debug\Server.Form1.resources
+F:\Server\Server\obj\Debug\Server.frmAbout.resources
+F:\Server\Server\obj\Debug\Server.Properties.Resources.resources
+F:\Server\Server\obj\Debug\Server.frmReport.resources
+F:\Server\Server\obj\Debug\Server.csproj.GenerateResource.Cache
